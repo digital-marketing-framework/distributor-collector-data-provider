@@ -4,15 +4,23 @@ namespace DigitalMarketingFramework\Distributor\CollectorDataProvider\DataProvid
 
 use DigitalMarketingFramework\Collector\Core\Model\Configuration\CollectorConfiguration;
 use DigitalMarketingFramework\Collector\Core\Service\CollectorInterface;
+use DigitalMarketingFramework\Core\ConfigurationDocument\SchemaDocument\Schema\ContainerSchema;
+use DigitalMarketingFramework\Core\ConfigurationDocument\SchemaDocument\Schema\CustomSchema;
+use DigitalMarketingFramework\Core\ConfigurationDocument\SchemaDocument\Schema\Plugin\DataProcessor\DataMapperSchema;
+use DigitalMarketingFramework\Core\ConfigurationDocument\SchemaDocument\Schema\SchemaInterface;
 use DigitalMarketingFramework\Core\Context\ContextInterface;
+use DigitalMarketingFramework\Core\DataProcessor\DataProcessor;
+use DigitalMarketingFramework\Core\DataProcessor\DataProcessorAwareInterface;
+use DigitalMarketingFramework\Core\DataProcessor\DataProcessorAwareTrait;
 use DigitalMarketingFramework\Distributor\Core\DataProvider\DataProvider;
 use DigitalMarketingFramework\Distributor\Core\Model\DataSet\SubmissionDataSetInterface;
 use DigitalMarketingFramework\Distributor\Core\Registry\RegistryInterface;
 
-class CollectorDataProvider extends DataProvider
+class CollectorDataProvider extends DataProvider implements DataProcessorAwareInterface
 {
+    use DataProcessorAwareTrait;
+
     protected const KEY_DATA_MAP = 'dataMap';
-    protected const DEFAULT_DATA_MAP = null;
 
     public function __construct(
         string $keyword,
@@ -31,9 +39,9 @@ class CollectorDataProvider extends DataProvider
 
     protected function process(): void
     {
-        $dataMap = $this->getConfig(static::KEY_DATA_MAP);
         $configuration = CollectorConfiguration::convert($this->submission->getConfiguration());
-        $data = $this->collector->collect($configuration, $dataMap, $this->submission->getContext());
+        $data = $this->collector->collect($configuration, $this->submission->getContext());
+        $data = $this->dataProcessor->processDataMapper($this->getConfig(static::KEY_DATA_MAP), $data, $this->submission->getConfiguration());
         foreach ($data as $field => $value) {
             $this->setField($field, $value);
         }
@@ -42,7 +50,15 @@ class CollectorDataProvider extends DataProvider
     public static function getDefaultConfiguration(): array
     {
         return parent::getDefaultConfiguration() + [
-            static::KEY_DATA_MAP => static::DEFAULT_DATA_MAP,
+            static::KEY_DATA_MAP => DataProcessor::getDefaultDataMapperConfiguration(),
         ];
+    }
+
+    public static function getSchema(): SchemaInterface
+    {
+        /** @var ContainerSchema $schema */
+        $schema = parent::getSchema();
+        $schema->addProperty(static::KEY_DATA_MAP, new CustomSchema(DataMapperSchema::TYPE));
+        return $schema;
     }
 }
