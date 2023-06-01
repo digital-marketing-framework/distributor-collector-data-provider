@@ -47,13 +47,6 @@ class CollectorDataProvider extends DataProvider implements DataProcessorAwareIn
         }
     }
 
-    public static function getDefaultConfiguration(): array
-    {
-        return parent::getDefaultConfiguration() + [
-            static::KEY_DATA_MAP => DataProcessor::getDefaultDataMapperConfiguration(),
-        ];
-    }
-
     public static function getSchema(): SchemaInterface
     {
         /** @var ContainerSchema $schema */
