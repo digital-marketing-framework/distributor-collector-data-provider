@@ -1,14 +1,16 @@
 {
     "name": "digital-marketing-framework/distributor-collector-data-provider",
     "type": "library",
-    "description": "FormRelay provider for collector data.",
+    "description": "Digital Marketing Framework - Distributor - Collector Data Provider",
     "keywords": [
+        "marketing",
         "framework",
-        "form",
         "data",
-        "submission",
         "relay",
-        "collector"
+        "distribution",
+        "distributor",
+        "collector",
+        "provider"
     ],
     "homepage": "https://www.mediatis.de",
     "license": "GPL-2.0-or-later",
