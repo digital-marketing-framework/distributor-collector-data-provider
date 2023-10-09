@@ -31,6 +31,7 @@ class DistributorCollectorDataProviderInitialization extends Initialization
         if ($pluginClass === CollectorDataProvider::class) {
             return [$this->collectorRegistry->getCollector()];
         }
+
         return parent::getAdditionalPluginArguments($interface, $pluginClass);
     }
 }
