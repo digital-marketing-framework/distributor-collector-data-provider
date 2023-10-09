@@ -9,7 +9,6 @@ use DigitalMarketingFramework\Core\ConfigurationDocument\SchemaDocument\Schema\C
 use DigitalMarketingFramework\Core\ConfigurationDocument\SchemaDocument\Schema\Plugin\DataProcessor\DataMapperSchema;
 use DigitalMarketingFramework\Core\ConfigurationDocument\SchemaDocument\Schema\SchemaInterface;
 use DigitalMarketingFramework\Core\Context\ContextInterface;
-use DigitalMarketingFramework\Core\DataProcessor\DataProcessor;
 use DigitalMarketingFramework\Core\DataProcessor\DataProcessorAwareInterface;
 use DigitalMarketingFramework\Core\DataProcessor\DataProcessorAwareTrait;
 use DigitalMarketingFramework\Distributor\Core\DataProvider\DataProvider;
@@ -52,6 +51,7 @@ class CollectorDataProvider extends DataProvider implements DataProcessorAwareIn
         /** @var ContainerSchema $schema */
         $schema = parent::getSchema();
         $schema->addProperty(static::KEY_DATA_MAP, new CustomSchema(DataMapperSchema::TYPE));
+
         return $schema;
     }
 }
