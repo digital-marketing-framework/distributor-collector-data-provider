@@ -22,9 +22,10 @@ class DistributorCollectorDataProviderInitialization extends Initialization
     protected const SCHEMA_MIGRATIONS = [];
 
     public function __construct(
-        protected CollectorRegistryInterface $collectorRegistry
+        protected CollectorRegistryInterface $collectorRegistry,
+        string $packageAlias = ''
     ) {
-        parent::__construct('distributor-collector-data-provider', '1.0.0');
+        parent::__construct('distributor-collector-data-provider', '1.0.0', $packageAlias);
     }
 
     protected function getAdditionalPluginArguments(string $interface, string $pluginClass, RegistryInterface $registry): array
