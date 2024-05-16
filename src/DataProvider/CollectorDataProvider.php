@@ -4,7 +4,7 @@ namespace DigitalMarketingFramework\Distributor\CollectorDataProvider\DataProvid
 
 use DigitalMarketingFramework\Collector\Core\Model\Configuration\CollectorConfiguration;
 use DigitalMarketingFramework\Collector\Core\Service\CollectorInterface;
-use DigitalMarketingFramework\Core\Context\ContextInterface;
+use DigitalMarketingFramework\Core\Context\WriteableContextInterface;
 use DigitalMarketingFramework\Core\DataProcessor\DataProcessorAwareInterface;
 use DigitalMarketingFramework\Core\DataProcessor\DataProcessorAwareTrait;
 use DigitalMarketingFramework\Core\SchemaDocument\Schema\ContainerSchema;
@@ -30,16 +30,21 @@ class CollectorDataProvider extends DataProvider implements DataProcessorAwareIn
         parent::__construct($keyword, $registry, $submission);
     }
 
-    protected function processContext(ContextInterface $context): void
+    protected function processContext(WriteableContextInterface $context): void
     {
+        /**
+         * TODO Does the collector really need the submission configuration?
+         *      Or should it rather use the main configuration document, which is usually used for the collector?
+         * TODO Also, what field groups to use?
+         */
         $configuration = CollectorConfiguration::convert($this->submission->getConfiguration());
-        $this->collector->prepareContext($configuration, context: $this->submission->getContext());
+        $this->collector->prepareContext($configuration, $context);
     }
 
     protected function process(): void
     {
         $configuration = CollectorConfiguration::convert($this->submission->getConfiguration());
-        $data = $this->collector->collect($configuration, preparedContext: $this->submission->getContext());
+        $data = $this->collector->collect($configuration);
 
         $dataMapperGroupId = $this->getConfig(static::KEY_DATA_MAP);
         $dataMapperGroupConfig = $this->submission->getConfiguration()->getDataMapperGroupConfiguration($dataMapperGroupId);
